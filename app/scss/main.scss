@@ -1,0 +1,33 @@
+@import "_mixins";
+@import "_variables";
+@import "_fonts";
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+
+}
+
+nav, header, section, footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+a {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.wrap {
+  display: flex;
+  @include wrap();
+}
+
+@import "icons";
