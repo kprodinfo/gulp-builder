@@ -1,0 +1,18 @@
+mixin head(title, description, keywords)
+    head
+        meta(charset="utf-8")
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(name="viewport", content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no")
+        meta(name="HandheldFriendly", content="True")
+        title= title
+        meta(name="description", content=`${description}` lang="ru")
+        meta(name="keywords", content=`${keywords}` lang="ru")
+        meta(property="og:title" content=`${title}`)
+        meta(property="og:description" content=`${description}`)
+        meta(property="og:image" content="img/og-image.jpg")
+        meta(property="og:locale" content="ru_RU")
+        meta(property="og:url" content="http://yoursite.ru")
+        link(rel="image_src" href="img/og-image.jpg")
+        link(href="css/libs.min.css" rel="stylesheet" type="text/css")
+        link(href="css/style.css" rel="stylesheet" type="text/css")
+        link(rel="icon" href="favicon.ico" type="image/x-icon")
