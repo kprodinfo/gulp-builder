@@ -1,5 +1,5 @@
 'use strict';
-const gulp = require('gulp'),
+var gulp = require('gulp'),
     prettify = require('gulp-prettify'),
     browserSync = require('browser-sync'),
     notify = require('gulp-notify'),
@@ -26,14 +26,12 @@ var path = {
         fonts: 'build/fonts/'
     },
     src: {
-        html: ['app/blocks/*.pug'],
-        scss: [
-            'app/scss/main.scss'
-        ],
+        pug: 'app/pages/*.pug',
+        scss: 'app/scss/main.scss',
         js: 'app/js/custom.js',
-        img: 'app/blocks/**/img/*.*',
-        icons: 'app/blocks/**/icons/*.*',
-        fonts: ['app/fonts/**/*.*'],
+        img: 'app/elements/**/img/*.*',
+        icons: 'app/elements/**/icons/*.*',
+        fonts: 'app/fonts/**/*.*',
         vendor_js: [
             'bower_components/jquery/dist/jquery.min.js'
         ],
@@ -42,33 +40,37 @@ var path = {
         ]
     },
     watch: {
-        html: ['app/blocks/**/*.pug'],
+        html: ['app/elements/**/*.pug',
+               'app/pages/*.pug'
+        ],
         scss: [
-            'app/blocks/**/*.scss',
+            'app/elements/**/*.scss',
             'app/scss/**/*.scss'
         ],
-        js: 'app/blocks/**/*.js',
+        js: ['app/elements/**/*.js',
+            'app/js/*.*js'
+        ],
         fonts: 'app/fonts/**/*.*',
-        img: 'app/blocks/**/img/*.*',
-        icons: 'app/blocks/**/icons/*.*',
+        img: 'app/elements/**/img/*.*',
+        icons: 'app/elements/**/icons/*.*',
         libs: 'app/libs/**/*.*'
     },
     clear: {
         html: 'build/*.html',
         img: 'build/img/*.*',
         icons: 'build/img/icons/*.*',
-        fonts: 'build/fonts',
+        fonts: 'build/fonts/',
         style: 'build/css/style.css',
         vendor_style: 'build/css/libs.min.css',
         js: 'build/js/custom.js',
         vendor_js: 'build/js/libs.min.js',
         sourcemaps: 'build/css/sourcemaps'
     },
-    sourcemaps: './sourcemaps',
+    sourcemaps: './sourcemaps'
 };
 
 gulp.task('pug', function () {
-    return gulp.src(path.src.html)
+    return gulp.src(path.src.pug)
         .pipe(plumber({
             errorHandler: notify.onError({
                 title: 'Error in PUG',
@@ -187,12 +189,13 @@ gulp.task('browser-sync', function () {
         server: {
             baseDir: 'build/'
         },
+        open: false, // открывать ли браузер автоматически
         notify: false
     });
 });
 
 gulp.task('clear', function () {
-    clear.sync('./build');
+    clear.sync(path.build.html);
 });
 
 gulp.task('build', ['clear', 'pug', 'scss', 'js', 'img', 'icons', 'fonts', 'vendor:js', 'vendor:css'], function () {
