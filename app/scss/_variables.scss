@@ -1,12 +1,11 @@
-// Colors
-$main-color: #fff;
-
-
-// Breakpoints
+// Wrap size
 $breakpoints: (
-        'sm': 320px,
-        's': 480px,
-        'm': 768px,
-        'l': 990px,
-        'xl': 1170px,
+  'mobile': 320px,
+  'tablet': 768px,
+  'notebook': 991px,
+  'desktop': 1200px,
 );
+
+// Fonts
+$base-font: 'Arial', sans-serif;
+$base-size: 16px;

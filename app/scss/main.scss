@@ -1,6 +1,6 @@
+@import "_fonts";
 @import "_mixins";
 @import "_variables";
-@import "_fonts";
 
 * {
   box-sizing: border-box;
@@ -9,13 +9,13 @@
 }
 
 body {
-
+  font-family: $base-font;
+  font-size: $base-size;
+  min-width: map_get($breakpoints, 'mobile');
 }
 
-nav, header, section, footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+img {
+  max-width: 100%;
 }
 
 a {
@@ -25,9 +25,21 @@ a {
   }
 }
 
-.wrap {
-  display: flex;
-  @include wrap();
+button {
+  font-family: $base-font;
+  &:hover{
+    cursor: pointer;
+  }
 }
 
+.section {
+  @include flex('', '', 'c');
+}
+
+.wrap {
+  @include flex('c', 's', 's');
+  @include wrap(15);
+}
+
+@import "../elements/demo/demo";
 @import "icons";
