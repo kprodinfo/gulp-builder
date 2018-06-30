@@ -1,3 +1,3 @@
 $('document').ready(function () {
-    //=require ../blocks/**/*.js
+    //=require ../elements/**/*.js
 });
