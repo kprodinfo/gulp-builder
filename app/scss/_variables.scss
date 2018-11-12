@@ -1,11 +1,8 @@
-// Wrap size
-$breakpoints: (
-  'mobile': 320px,
-  'tablet': 768px,
-  'notebook': 991px,
-  'desktop': 1200px,
-);
-
 // Fonts
 $base-font: 'Arial', sans-serif;
-$base-size: 16px;
+$base-font-size: 16px;
+
+$vk-color: #4a76a8;
+$fb-color: #3b5998;
+$in-color: #007cb7;
+$tg-color: #229ace;

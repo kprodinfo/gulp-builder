@@ -10,8 +10,8 @@
 
 body {
   font-family: $base-font;
-  font-size: $base-size;
-  min-width: map_get($breakpoints, 'mobile');
+  font-size: $base-font-size;
+  min-width: 320px;
 }
 
 img {
@@ -20,6 +20,7 @@ img {
 
 a {
   text-decoration: none;
+
   &:hover {
     text-decoration: underline;
   }
@@ -33,14 +34,15 @@ button {
 }
 
 .section {
-  @include flex('', '', 'c');
+  display: flex;
+  justify-content: center;
 }
 
 .wrap {
-  @include flex('c', 's', 's');
-  @include wrap(15);
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
 }
-
-@import "../elements/demo/demo";
 
 @import "icons";

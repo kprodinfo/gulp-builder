@@ -1,6 +1,6 @@
 {
-  "name": "Default bower components for gulp builder",
-  "description": "Normalize.css + Jquery",
+  "name": "gulp builder",
+  "description": "Bower components for gulp builder",
   "main": "index.js",
   "authors": [
     "kprod"

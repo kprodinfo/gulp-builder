@@ -1,5 +1,9 @@
 'use strict';
-var gulp = require('gulp'),
+let config = {
+    watch: false
+};
+
+let gulp = require('gulp'),
     prettify = require('gulp-prettify'),
     browserSync = require('browser-sync'),
     notify = require('gulp-notify'),
@@ -14,16 +18,22 @@ var gulp = require('gulp'),
     cssnano = require('gulp-cssnano'),
     autoprefixer = require('gulp-autoprefixer'),
     plumber = require('gulp-plumber'),
-    sourcemap = require('gulp-sourcemaps');
+    sourcemap = require('gulp-sourcemaps'),
+    htmlInjector = require("bs-html-injector"),
+    emitty = require('emitty').setup('app', 'pug'),
+    svgstore = require('gulp-svgstore'),
+    cheerio = require('gulp-cheerio'),
+    replace = require('gulp-replace'),
+    gulpIf = require('gulp-if');
 
-var path = {
+let path = {
     build: {
-        html: 'build/',
+        pug: 'build/',
         js: 'build/js/',
         css: 'build/css/',
         img: 'build/img/',
-        icons: 'build/img/',
-        fonts: 'build/fonts/'
+        sprite: 'build/img/',
+        fonts: 'build/fonts/',
     },
     src: {
         pug: 'app/pages/*.pug',
@@ -31,6 +41,7 @@ var path = {
         js: 'app/js/custom.js',
         img: 'app/elements/**/img/*.*',
         icons: 'app/elements/**/icons/*.*',
+        svg_icons: 'app/elements/**/svg-icons/*.svg',
         fonts: 'app/fonts/**/*.*',
         vendor_js: [
             'bower_components/jquery/dist/jquery.min.js'
@@ -40,37 +51,32 @@ var path = {
         ]
     },
     watch: {
-        html: ['app/elements/**/*.pug',
-               'app/pages/*.pug'
-        ],
+        elements: 'app/elements/**/*.pug',
+        pages: 'app/pages/*.pug',
         scss: [
             'app/elements/**/*.scss',
             'app/scss/**/*.scss'
         ],
-        js: ['app/elements/**/*.js',
+        js: [
+            'app/elements/**/*.js',
             'app/js/*.*js'
         ],
         fonts: 'app/fonts/**/*.*',
         img: 'app/elements/**/img/*.*',
         icons: 'app/elements/**/icons/*.*',
-        libs: 'app/libs/**/*.*'
+        svg_icons: 'app/elements/**/svg-icons/*.svg'
     },
     clear: {
-        html: 'build/*.html',
-        img: 'build/img/*.*',
-        icons: 'build/img/icons/*.*',
-        fonts: 'build/fonts/',
-        style: 'build/css/style.css',
-        vendor_style: 'build/css/libs.min.css',
-        js: 'build/js/custom.js',
-        vendor_js: 'build/js/libs.min.js',
-        sourcemaps: 'build/css/sourcemaps'
+        dev: 'build',
+        img: 'build/img',
+        fonts: 'build/fonts'
     },
     sourcemaps: './sourcemaps'
 };
 
 gulp.task('pug', function () {
     return gulp.src(path.src.pug)
+        .pipe(gulpIf(config.watch, emitty.stream()))
         .pipe(plumber({
             errorHandler: notify.onError({
                 title: 'Error in PUG',
@@ -83,8 +89,7 @@ gulp.task('pug', function () {
             indent_inner_html: true,
             unformatted: ['i', 'a', 'span', 'b', 'strong', 'sup', 'sub']
         }))
-        .pipe(gulp.dest(path.build.html))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(gulp.dest(path.build.pug))
 });
 
 gulp.task('scss', function () {
@@ -96,7 +101,9 @@ gulp.task('scss', function () {
                 message: '<%= error.message %>'
             })
         }))
+        .pipe(replace('url(img/', 'url(../img/'))
         .pipe(scss({outputStyle: 'compressed'}))
+        .pipe(replace('img/', '../img/'))
         .pipe(autoprefixer("last 10 version"))
         .pipe(rename('style.css'))
         .pipe(sourcemap.write(path.sourcemaps))
@@ -119,11 +126,10 @@ gulp.task("js", function () {
 });
 
 gulp.task('img', function () {
-    clear(path.clear.img);
     return gulp.src(path.src.img)
         .pipe(plumber({
             errorHandler: notify.onError({
-                title: 'Error in IMG',
+                title: 'Error in img',
                 message: '<%= error.message %>'
             })
         }))
@@ -133,25 +139,38 @@ gulp.task('img', function () {
 });
 
 gulp.task('icons', function () {
-    clear(path.clear.icons);
     return gulp.src(path.src.icons)
         .pipe(plumber({
             errorHandler: notify.onError({
-                title: 'Error in ICONS',
+                title: 'Error in icons',
                 message: '<%= error.message %>'
             })
         }))
         .pipe(rename({dirname: 'icons'}))
-        .pipe(gulp.dest(path.build.icons))
-        .pipe(browserSync.reload({stream: true}))
+        .pipe(gulp.dest(path.build.img))
+        .pipe(browserSync.reload({stream: true}));
 });
+
+gulp.task('svg-icons', function () {
+    return gulp.src(path.src.svg_icons)
+        .pipe(cheerio({
+            run: function ($) {
+                $('[fill^="#"]').removeAttr('fill');
+                $('[stroke^="#"]').removeAttr('stroke');
+            },
+            parserOptions: {xmlMode: true}
+        }))
+        .pipe(svgstore({inlineSvg: true}))
+        .pipe(gulp.dest(path.build.sprite))
+});
+
 
 gulp.task('fonts', function () {
     clear(path.clear.fonts);
     return gulp.src(path.src.fonts)
         .pipe(plumber({
             errorHandler: notify.onError({
-                title: 'Error in FONTS',
+                title: 'Error in fonts',
                 message: '<%= error.message %>'
             })
         }))
@@ -162,7 +181,7 @@ gulp.task('vendor:js', function () {
     return gulp.src(path.src.vendor_js)
         .pipe(plumber({
             errorHandler: notify.onError({
-                title: 'Error in Vendor JavaScript',
+                title: 'Error in vendor JavaScript',
                 message: '<%= error.message %>'
             })
         }))
@@ -175,35 +194,36 @@ gulp.task('vendor:css', function () {
     return gulp.src(path.src.vendor_css)
         .pipe(plumber({
             errorHandler: notify.onError({
-                title: 'Error in Vendor CSS',
+                title: 'Error in vendor CSS',
                 message: '<%= error.message %>'
             })
         }))
         .pipe(concat('libs.min.css'))
-        .pipe(cssnano())
+        .pipe(cssnano({zindex: false}))
         .pipe(gulp.dest(path.build.css));
 });
 
 gulp.task('browser-sync', function () {
+    browserSync.use(htmlInjector, {
+        files: "build/*.html"
+    });
     browserSync({
         server: {
             baseDir: 'build/'
-        },
-        open: false, // открывать ли браузер автоматически
-        notify: false
+        }
     });
 });
 
 gulp.task('clear', function () {
-    clear.sync(path.build.html);
+    clear.sync(path.clear.dev);
 });
 
-gulp.task('build', ['clear', 'pug', 'scss', 'js', 'img', 'icons', 'fonts', 'vendor:js', 'vendor:css'], function () {
-    clear.sync(path.clear.sourcemaps);
-});
-gulp.task('watch', ['clear', 'pug', 'scss', 'js', 'img', 'icons', 'fonts', 'vendor:js', 'vendor:css', 'browser-sync'], function () {
-
-    watch(path.watch.html, function () {
+gulp.task('watch', ['clear', 'pug', 'scss', 'js', 'img', 'icons', 'svg-icons', 'fonts', 'vendor:js', 'vendor:css', 'browser-sync'], function () {
+    config.watch = true;
+    watch(path.watch.elements, function () {
+        gulp.start('pug');
+    });
+    watch(path.watch.pages, function () {
         gulp.start('pug');
     });
     watch(path.watch.scss, function () {
@@ -220,10 +240,6 @@ gulp.task('watch', ['clear', 'pug', 'scss', 'js', 'img', 'icons', 'fonts', 'vend
     });
     watch(path.watch.js, function () {
         gulp.start('js');
-    });
-    watch(path.watch.libs, function () {
-        gulp.start('vendor:js');
-        gulp.start('vendor:css');
     });
 });
 

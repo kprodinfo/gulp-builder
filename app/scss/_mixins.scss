@@ -1,77 +1,30 @@
-@mixin media($width) {
-  $width: map_get($breakpoints, $width);
-  $width: $width - 1px;
-  @media(max-width: $width) {
-    @content;
+@mixin placeholder($color) {
+  &::-moz-placeholder {
+    color: $color;
+    opacity: 1;
+  }
+  &::-webkit-input-placeholder {
+    color: $color;
+    opacity: 1;
+  }
+  &:-ms-input-placeholder {
+    color: $color;
+    opacity: 1;
+  }
+  &::-ms-input-placeholder {
+    color: $color;
+    opacity: 1;
+  }
+  &::placeholder {
+    color: $color;
+    opacity: 1;
   }
 }
-@mixin wrap($padding) {
-  width: map_get($breakpoints, 'desktop');
-  padding-left: $padding+px;
-  padding-right: $padding+px;
 
-  @include media('desktop') {
-    width: map_get($breakpoints, 'notebook');
-  }
-  @include media('notebook') {
-    width: map_get($breakpoints, 'tablet');
-  }
-  @include media('tablet') {
-    width: map_get($breakpoints, 'mobile');
-  }
-}
-// ======== Флекс для элемента ======== //
-// @d: flex-direction(c - column, r - row), default: row
-// @ai: align-items(s - flex-start, c - center, e - flex-end)
-// @jc: justify-content(s - flex-start, c - center, e - flex-end)
-@mixin flex($d, $ai, $jc, $fw: 'w') {
-  display: flex;
-  @if ($d == 'c') {
-    flex-direction: column;
-  }
-  @if ($ai == 's') {
-    align-items: flex-start;
-  } @else if ($ai == 'c') {
-    align-items: center;
-  } @else if ($ai == 'e') {
-    align-items: flex-end;
-  }
-  @if ($jc == 's') {
-    justify-content: flex-start;
-  } @else if ($jc == 'c') {
-    justify-content: center;
-  } @else if ($jc == 'e') {
-    justify-content: flex-end;
-  }
-  @if ($fw == 'n') {
-    flex-wrap: nowrap;
-  }
-}
-// ======== Адаптивные иконки ======== //
-// @name: название иконки и класса, который будет сгенерирован, например home -> будет искать иконку home.{type} по пути {path} и сгенерирует название класса .icon_home
-// @width: Ширина
-// @height: Высота
-// @breakpoint: ширина экрана при которой иконка примет высоту и ширину в 75% от @width и @height
-// @breakpoint2: ширина экрана при которой иконка примет высоту и ширину в 50% от @width и @height
-// @type: расширешние текущей иконки, по дефолту SVG
-@mixin icon($name, $width, $height, $breakpoint: '', $breakpoint2: '', $type: '.svg') {
-  &_#{$name} {
-    $name: '../img/icons/'+$name+$type;
-    width: $width+px;
-    height: $height+px;
-    background: url($name);
-    background-size: cover;
-    @if $breakpoint != '' {
-      @media(max-width: $breakpoint) {
-        width: $width * 0.75+px;
-        height: $height * 0.75+px;
-      }
-    }
-    @if $breakpoint2 != '' {
-      @media(max-width: $breakpoint2) {
-        width: $width * 0.5+px;
-        height: $height * 0.5+px;
-      }
-    }
-  }
+@mixin block-select() {
+  user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
 }
