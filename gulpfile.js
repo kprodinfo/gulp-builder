@@ -27,8 +27,8 @@ let gulp = require('gulp'),
     replace = require('gulp-replace'),
     gulpIf = require('gulp-if');
 
-pugbem.e = 'пошёлнахуй';
-pugbem.m = 'анукаидинахуй';
+pugbem.e = '__';
+pugbem.m = '_';
 
 let path = {
     build: {
