@@ -14,6 +14,7 @@ let gulp = require('gulp'),
     rename = require('gulp-rename'),
     include = require("gulp-include"),
     pug = require('gulp-pug'),
+    pugbem = require('gulp-pugbem'),
     scss = require('gulp-sass'),
     cssnano = require('gulp-cssnano'),
     autoprefixer = require('gulp-autoprefixer'),
@@ -25,6 +26,9 @@ let gulp = require('gulp'),
     cheerio = require('gulp-cheerio'),
     replace = require('gulp-replace'),
     gulpIf = require('gulp-if');
+
+pugbem.e = '__';
+pugbem.m = '_';
 
 let path = {
     build: {
@@ -83,7 +87,9 @@ gulp.task('pug', function () {
                 message: '<%= error.message %>'
             })
         }))
-        .pipe(pug())
+        .pipe(pug({
+            plugins: [pugbem]
+        }))
         .pipe(prettify({
             indent_size: 4,
             indent_inner_html: true,
