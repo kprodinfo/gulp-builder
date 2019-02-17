@@ -241,6 +241,9 @@ gulp.task('watch', ['clear', 'pug', 'scss', 'js', 'img', 'icons', 'svg-icons', '
     watch(path.watch.icons, function () {
         gulp.start('icons');
     });
+    watch(path.watch.svg_icons, function () {
+        gulp.start('svg-icons');
+    });
     watch(path.watch.fonts, function () {
         gulp.start('fonts');
     });
