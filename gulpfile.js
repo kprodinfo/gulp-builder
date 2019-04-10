@@ -25,7 +25,8 @@ let gulp = require('gulp'),
     svgstore = require('gulp-svgstore'),
     cheerio = require('gulp-cheerio'),
     replace = require('gulp-replace'),
-    gulpIf = require('gulp-if');
+    gulpIf = require('gulp-if'),
+    babel = require('gulp-babel');
 
 pugbem.e = '__';
 pugbem.m = '_';
@@ -126,7 +127,10 @@ gulp.task("js", function () {
             })
         }))
         .pipe(include())
-        .pipe(uglify())
+        .pipe(babel({
+            plugins: ['transform-es2015-arrow-functions']
+        }))
+        //.pipe(uglify())
         .pipe(gulp.dest(path.build.js))
         .pipe(browserSync.reload({stream: true}))
 });
