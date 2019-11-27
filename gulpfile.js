@@ -48,12 +48,8 @@ let path = {
         icons: 'app/elements/**/icons/*.*',
         svg_icons: 'app/elements/**/svg-icons/*.svg',
         fonts: 'app/fonts/**/*.*',
-        vendor_js: [
-            'bower_components/jquery/dist/jquery.min.js'
-        ],
-        vendor_css: [
-            'bower_components/normalize-css/normalize.css'
-        ]
+        vendor_js: 'app/js/vendor.js',
+        vendor_css: 'app/scss/vendor.scss'
     },
     watch: {
         elements: 'app/elements/**/*.pug',
@@ -64,12 +60,14 @@ let path = {
         ],
         js: [
             'app/elements/**/*.js',
-            'app/js/*.*js'
+            'app/js/custom.js'
         ],
         fonts: 'app/fonts/**/*.*',
         img: 'app/elements/**/img/*.*',
         icons: 'app/elements/**/icons/*.*',
-        svg_icons: 'app/elements/**/svg-icons/*.svg'
+        svg_icons: 'app/elements/**/svg-icons/*.svg',
+        vendor_js: 'app/js/vendor.js',
+        vendor_css: 'app/scss/vendor.scss'
     },
     clear: {
         dev: 'build',
@@ -101,7 +99,7 @@ gulp.task('pug', function () {
 
 gulp.task('scss', function () {
     return gulp.src(path.src.scss)
-        .pipe(sourcemap.init())
+        //.pipe(sourcemap.init())
         .pipe(plumber({
             errorHandler: notify.onError({
                 title: 'Error in SCSS',
@@ -113,7 +111,7 @@ gulp.task('scss', function () {
         .pipe(replace('img/', '../img/'))
         .pipe(autoprefixer("last 10 version"))
         .pipe(rename('style.css'))
-        .pipe(sourcemap.write(path.sourcemaps))
+        //.pipe(sourcemap.write(path.sourcemaps))
         .pipe(gulp.dest(path.build.css))
         .pipe(browserSync.reload({stream: true}))
 });
@@ -191,26 +189,34 @@ gulp.task('vendor:js', function () {
     return gulp.src(path.src.vendor_js)
         .pipe(plumber({
             errorHandler: notify.onError({
-                title: 'Error in vendor JavaScript',
+                title: 'Error in JavaScript',
                 message: '<%= error.message %>'
             })
         }))
-        .pipe(concat('libs.min.js'))
+        .pipe(include())
+        .pipe(babel({
+            plugins: ['transform-es2015-arrow-functions']
+        }))
         .pipe(uglify())
-        .pipe(gulp.dest(path.build.js));
+        .pipe(rename('libs.min.js'))
+        .pipe(gulp.dest(path.build.js))
+        .pipe(browserSync.reload({stream: true}))
 });
 
 gulp.task('vendor:css', function () {
     return gulp.src(path.src.vendor_css)
         .pipe(plumber({
             errorHandler: notify.onError({
-                title: 'Error in vendor CSS',
+                title: 'Error in Vendor:SCSS',
                 message: '<%= error.message %>'
             })
         }))
-        .pipe(concat('libs.min.css'))
-        .pipe(cssnano({zindex: false}))
-        .pipe(gulp.dest(path.build.css));
+        .pipe(include())
+        .pipe(scss({outputStyle: 'compressed'}))
+        .pipe(autoprefixer("last 10 version"))
+        .pipe(rename('libs.min.css'))
+        .pipe(gulp.dest(path.build.css))
+        .pipe(browserSync.reload({stream: true}))
 });
 
 gulp.task('browser-sync', function () {
@@ -222,38 +228,25 @@ gulp.task('browser-sync', function () {
             baseDir: 'build/'
         }
     });
+    watch(path.watch.elements, gulp.parallel('pug'));
+    watch(path.watch.pages, gulp.parallel('pug'));
+    watch(path.watch.js, gulp.parallel('js'));
+    watch(path.watch.vendor_js, gulp.parallel('vendor:js'));
+    watch(path.watch.vendor_css, gulp.parallel('vendor:css'));
+    watch(path.watch.scss, gulp.parallel('scss'));
+    watch(path.watch.img, gulp.parallel('img'));
+    watch(path.watch.icons, gulp.parallel('icons'));
+    watch(path.watch.svg_icons, gulp.parallel('svg-icons'));
+    watch(path.watch.fonts, gulp.parallel('fonts'));
 });
 
-gulp.task('clear', function () {
+gulp.task('clear', function (complete) {
     clear.sync(path.clear.dev);
+    complete();
 });
 
-gulp.task('watch', ['clear', 'pug', 'scss', 'js', 'img', 'icons', 'svg-icons', 'fonts', 'vendor:js', 'vendor:css', 'browser-sync'], function () {
+gulp.task('default', gulp.series(['clear', 'pug', 'scss', 'js', 'img', 'icons', 'svg-icons', 'fonts', 'vendor:js', 'vendor:css', 'browser-sync']), function () {
     config.watch = true;
-    watch(path.watch.elements, function () {
-        gulp.start('pug');
-    });
-    watch(path.watch.pages, function () {
-        gulp.start('pug');
-    });
-    watch(path.watch.scss, function () {
-        gulp.start('scss');
-    });
-    watch(path.watch.img, function () {
-        gulp.start('img');
-    });
-    watch(path.watch.icons, function () {
-        gulp.start('icons');
-    });
-    watch(path.watch.svg_icons, function () {
-        gulp.start('svg-icons');
-    });
-    watch(path.watch.fonts, function () {
-        gulp.start('fonts');
-    });
-    watch(path.watch.js, function () {
-        gulp.start('js');
-    });
 });
 
-gulp.task('default', ['watch']);
+exports.default = gulp.parallel('default');
