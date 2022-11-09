@@ -1,6 +1,6 @@
 {
   "name": "builder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
@@ -8,6 +8,9 @@
   },
   "author": "kprod (https://kprod.info)",
   "license": "ISC",
+  "dependencies": {
+    "normalize-css": "^2.3.1"
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
