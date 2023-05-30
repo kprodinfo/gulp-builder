@@ -194,10 +194,6 @@ gulp.task('vendor:js', function () {
             })
         }))
         .pipe(include())
-        .pipe(babel({
-            plugins: ['transform-es2015-arrow-functions']
-        }))
-        .pipe(uglify())
         .pipe(rename('libs.min.js'))
         .pipe(gulp.dest(path.build.js))
         .pipe(browserSync.reload({stream: true}))
