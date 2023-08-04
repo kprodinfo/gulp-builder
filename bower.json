@@ -1,0 +1,21 @@
+{
+  "name": "gulp builder",
+  "description": "Bower components for gulp builder",
+  "main": "index.js",
+  "authors": [
+    "kprod"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "normalize-css": "normalize.css#^7.0.0",
+    "jquery": "^3.2.1"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "builder",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
@@ -8,10 +8,13 @@
   },
   "author": "kprod (https://kprod.info)",
   "license": "ISC",
+<<<<<<< HEAD
   "dependencies": {
     "normalize-css": "^2.3.1",
     "vue": "^2.7.14"
   },
+=======
+>>>>>>> parent of fc3e762 (remove bower)
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
